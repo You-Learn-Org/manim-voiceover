@@ -159,6 +159,12 @@ class SpeechService(ABC):
                     "transcribe",
                     "SpeechService.set_transcription()",
                 )
+
+                # Suppress verbose logging from huggingface_hub and httpx
+                import logging
+                logging.getLogger("httpx").setLevel(logging.WARNING)
+                logging.getLogger("huggingface_hub").setLevel(logging.WARNING)
+
                 self._whisper_model = WhisperModel(model)
             else:
                 self._whisper_model = None
