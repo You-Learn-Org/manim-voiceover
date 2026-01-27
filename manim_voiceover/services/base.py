@@ -21,15 +21,24 @@ from manim_voiceover.tracker import AUDIO_OFFSET_RESOLUTION
 
 
 def timestamps_to_word_boundaries(segments):
+    """Convert faster-whisper segments to word boundaries format.
+
+    Args:
+        segments: Iterator of faster-whisper Segment objects with word timestamps.
+
+    Returns:
+        list: List of word boundary dictionaries.
+    """
     word_boundaries = []
     current_text_offset = 0
     for segment in segments:
-        for dict_ in segment["words"]:
-            word = dict_["word"]
+        if segment.words is None:
+            continue
+        for word_info in segment.words:
+            word = word_info.word
             word_boundaries.append(
                 {
-                    "audio_offset": int(dict_["start"] * AUDIO_OFFSET_RESOLUTION),
-                    # "duration_milliseconds": 0,
+                    "audio_offset": int(word_info.start * AUDIO_OFFSET_RESOLUTION),
                     "text_offset": current_text_offset,
                     "word_length": len(word),
                     "text": word,
@@ -37,9 +46,6 @@ def timestamps_to_word_boundaries(segments):
                 }
             )
             current_text_offset += len(word)
-            # If word is not punctuation, add a space
-            # if word not in [".", ",", "!", "?", ";", ":", "(", ")"]:
-            # current_text_offset += 1
 
     return word_boundaries
 
@@ -62,7 +68,7 @@ class SpeechService(ABC):
             cache_dir (str, optional): The directory to save the audio
                 files to. Defaults to ``voiceovers/``.
             transcription_model (str, optional): The
-                `OpenAI Whisper model <https://github.com/openai/whisper#available-models-and-languages>`_
+                `Whisper model <https://github.com/SYSTRAN/faster-whisper#available-models>`_
                 to use for transcription. Defaults to None.
             transcription_kwargs (dict, optional): Keyword arguments to
                 pass to the transcribe() function. Defaults to {}.
@@ -92,15 +98,18 @@ class SpeechService(ABC):
 
         # Check whether word boundaries exist and if not run stt
         if "word_boundaries" not in dict_ and self._whisper_model is not None:
-            transcription_result = self._whisper_model.transcribe(
-                str(Path(self.cache_dir) / original_audio), **self.transcription_kwargs
+            segments, info = self._whisper_model.transcribe(
+                str(Path(self.cache_dir) / original_audio),
+                word_timestamps=True,
+                **self.transcription_kwargs
             )
-            logger.info("Transcription: " + transcription_result.text)
-            word_boundaries = timestamps_to_word_boundaries(
-                transcription_result.segments_to_dicts()
-            )
+            # Consume the generator to get all segments
+            segments_list = list(segments)
+            transcribed_text = "".join(segment.text for segment in segments_list)
+            logger.info("Transcription: " + transcribed_text)
+            word_boundaries = timestamps_to_word_boundaries(segments_list)
             dict_["word_boundaries"] = word_boundaries
-            dict_["transcribed_text"] = transcription_result.text
+            dict_["transcribed_text"] = transcribed_text
 
         # Audio callback
         self.audio_callback(original_audio, dict_, **kwargs)
@@ -139,23 +148,23 @@ class SpeechService(ABC):
         if model != self.transcription_model:
             if model is not None:
                 try:
-                    import whisper as __tmp
-                    import stable_whisper as whisper
+                    from faster_whisper import WhisperModel
                 except ImportError:
                     logger.error(
                         'Missing packages. Run `pip install "manim-voiceover[transcribe]"` to be able to transcribe voiceovers.'
                     )
 
                 prompt_ask_missing_extras(
-                    ["whisper", "stable_whisper"],
+                    ["faster_whisper"],
                     "transcribe",
                     "SpeechService.set_transcription()",
                 )
-                self._whisper_model = whisper.load_model(model)
+                self._whisper_model = WhisperModel(model)
             else:
                 self._whisper_model = None
 
         self.transcription_kwargs = kwargs
+        self.transcription_model = model
 
     def get_audio_basename(self, data: dict) -> str:
         dumped_data = json.dumps(data)
