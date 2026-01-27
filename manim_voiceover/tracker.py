@@ -138,11 +138,11 @@ class VoiceoverTracker:
         if not hasattr(self, "bookmark_times"):
             raise Exception(
                 "Word boundaries are required for timing with bookmarks. "
-                "Manim Voiceover currently supports auto-transcription using OpenAI Whisper, "
+                "Manim Voiceover currently supports auto-transcription using faster-whisper, "
                 "but this is not enabled for each speech service by default. "
                 "You can enable it by setting transcription_model='base' in your speech service initialization. "
                 "If the performance of the base model is not satisfactory, you can use one of the larger models. "
-                "See https://github.com/openai/whisper for a list of all the available models."
+                "See https://github.com/SYSTRAN/faster-whisper for a list of all the available models."
             )
 
     def time_until_bookmark(
