@@ -84,6 +84,13 @@ class OpenAIService(SpeechService):
             raise ValueError("The speed must be between 0.25 and 4.0.")
 
         input_text = remove_bookmarks(text)
+
+        if not input_text or not input_text.strip():
+            raise ValueError(
+                "The input text is empty after removing bookmarks. "
+                "Please provide non-empty text for speech synthesis."
+            )
+
         input_data = {
             "input_text": input_text,
             "service": "openai",
