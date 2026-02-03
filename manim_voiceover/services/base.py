@@ -59,6 +59,7 @@ class SpeechService(ABC):
         cache_dir: t.Optional[str] = None,
         transcription_model: t.Optional[str] = None,
         transcription_kwargs: dict = {},
+        transcription_model_kwargs: dict = {},
         **kwargs,
     ):
         """
@@ -72,6 +73,9 @@ class SpeechService(ABC):
                 to use for transcription. Defaults to None.
             transcription_kwargs (dict, optional): Keyword arguments to
                 pass to the transcribe() function. Defaults to {}.
+            transcription_model_kwargs (dict, optional): Keyword arguments to
+                pass to the WhisperModel constructor (e.g., compute_type, device).
+                Defaults to {}.
         """
         self.global_speed = global_speed
 
@@ -85,7 +89,7 @@ class SpeechService(ABC):
 
         self.transcription_model = None
         self._whisper_model = None
-        self.set_transcription(model=transcription_model, kwargs=transcription_kwargs)
+        self.set_transcription(model=transcription_model, kwargs=transcription_kwargs, model_kwargs=transcription_model_kwargs)
 
         self.additional_kwargs = kwargs
 
@@ -137,13 +141,15 @@ class SpeechService(ABC):
         )
         return dict_
 
-    def set_transcription(self, model: str = None, kwargs: dict = {}):
+    def set_transcription(self, model: str = None, kwargs: dict = {}, model_kwargs: dict = {}):
         """Set the transcription model and keyword arguments to be passed
         to the transcribe() function.
 
         Args:
             model (str, optional): The Whisper model to use for transcription. Defaults to None.
             kwargs (dict, optional): Keyword arguments to pass to the transcribe() function. Defaults to {}.
+            model_kwargs (dict, optional): Keyword arguments to pass to the WhisperModel constructor
+                (e.g., compute_type, device). Defaults to {}.
         """
         if model != self.transcription_model:
             if model is not None:
@@ -160,13 +166,14 @@ class SpeechService(ABC):
                     "SpeechService.set_transcription()",
                 )
 
-                # Suppress verbose logging from huggingface_hub, httpx, and faster_whisper
+                # Suppress verbose logging from huggingface_hub, httpx, faster_whisper, and ctranslate2
                 import logging
                 logging.getLogger("httpx").setLevel(logging.WARNING)
                 logging.getLogger("huggingface_hub").setLevel(logging.WARNING)
                 logging.getLogger("faster_whisper").setLevel(logging.WARNING)
+                logging.getLogger("ctranslate2").setLevel(logging.ERROR)
 
-                self._whisper_model = WhisperModel(model)
+                self._whisper_model = WhisperModel(model, **model_kwargs)
             else:
                 self._whisper_model = None
 
