@@ -56,7 +56,7 @@ class SpeechService(ABC):
     def __init__(
         self,
         global_speed: float = 1.00,
-        cache_dir: t.Optional[str] = None,
+        cache_dir: t.Optional[t.Union[str, Path]] = None,
         transcription_model: t.Optional[str] = None,
         transcription_kwargs: dict = {},
         transcription_model_kwargs: dict = {},
@@ -80,12 +80,11 @@ class SpeechService(ABC):
         self.global_speed = global_speed
 
         if cache_dir is not None:
-            self.cache_dir = cache_dir
+            self.cache_dir = Path(cache_dir)
         else:
             self.cache_dir = Path(config.media_dir) / DEFAULT_VOICEOVER_CACHE_DIR
 
-        if not os.path.exists(self.cache_dir):
-            os.makedirs(self.cache_dir)
+        self.cache_dir.mkdir(parents=True, exist_ok=True)
 
         self.transcription_model = None
         self._whisper_model = None
