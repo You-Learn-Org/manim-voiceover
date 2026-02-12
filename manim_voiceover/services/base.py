@@ -132,6 +132,7 @@ class SpeechService(ABC):
         else:
             dict_["final_audio"] = dict_["original_audio"]
 
+        # Cache the result to a JSON file defined by Manim's cache directory
         append_to_json_file(
             Path(self.cache_dir) / DEFAULT_VOICEOVER_CACHE_JSON_FILENAME, dict_
         )
