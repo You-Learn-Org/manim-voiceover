@@ -43,7 +43,7 @@ manim_render_translation = 'manim_voiceover.translate.render:main'
 [tool.poetry.dependencies]
 python = ">=3.8,<4"
 manim = "*"
-sox = "^1.4.1"
+audiostretchy = {version = "^1.3.5", extras = ["all"]}
 python-dotenv = "^0.21.0"
 mutagen = "^1.46.0"
 pydub = "^0.25.1"
