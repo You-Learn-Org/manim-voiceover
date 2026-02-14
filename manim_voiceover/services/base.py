@@ -97,6 +97,11 @@ class SpeechService(ABC):
         text = " ".join(text.split())
 
         dict_ = self.generate_from_text(text, cache_dir=None, path=path, **kwargs)
+
+        # If the result was already fully cached (including final_audio), return it
+        if "final_audio" in dict_ and (Path(self.cache_dir) / dict_["final_audio"]).exists():
+            return dict_
+
         original_audio = dict_["original_audio"]
 
         # Check whether word boundaries exist and if not run stt

@@ -12,10 +12,8 @@ def adjust_speed(input_path: str, output_path: str, tempo: float) -> None:
         output_path = path_ + str(uuid.uuid1()) + ext
 
     tfm = sox.Transformer()
-    if abs(tempo - 1.0) <= 0.1:
-        tfm.stretch(tempo)
-    else:
-        tfm.tempo(tempo)
+    # Always use tempo (WSOLA) over stretch (phase vocoder); stretch produces robotic artifacts on speech.
+    tfm.tempo(tempo, audio_type='s')
     tfm.build(input_filepath=input_path, output_filepath=output_path)
     if same_destination:
         os.rename(output_path, input_path)
