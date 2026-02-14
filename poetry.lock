@@ -138,6 +138,26 @@ tests-mypy = ["mypy (>=1.6) ; platform_python_implementation == \"CPython\" and 
 tests-no-zope = ["attrs[tests-mypy]", "cloudpickle ; platform_python_implementation == \"CPython\"", "hypothesis", "pympler", "pytest (>=4.3.0)", "pytest-xdist[psutil]"]
 
 [[package]]
+name = "audiostretchy"
+version = "1.3.5"
+description = "AudioStretchy is a Python library and CLI tool that which performs fast, high-quality time-stretching of WAV/MP3 files without changing their pitch. Works well for speech, can time-stretch silence separately. AudioStretchy is a wrapper around the audio-stretch C library by David Bryant."
+optional = false
+python-versions = ">=3.8"
+groups = ["main"]
+files = [
+    {file = "audiostretchy-1.3.5-py3-none-any.whl", hash = "sha256:17f65d4e5e8f08c75d3add851edca5751a3925d7b46b92e65d81842d4bf10dc9"},
+    {file = "audiostretchy-1.3.5.tar.gz", hash = "sha256:54a4d593304bd21bbd15c90b131cb134a1cef8153862f8a3af505e8be9c9fc01"},
+]
+
+[package.dependencies]
+fire = ">=0.5.0"
+numpy = ">=1.23.0"
+
+[package.extras]
+all = ["pydub (>=0.25.1) ; sys_platform == \"darwin\"", "pymp3 (>=0.1.9) ; sys_platform == \"win32\" or sys_platform == \"linux\"", "soxr (>=0.3.5)"]
+testing = ["pytest", "pytest-cov", "setuptools"]
+
+[[package]]
 name = "av"
 version = "12.3.0"
 description = "Pythonic bindings for FFmpeg's libraries."
@@ -1318,6 +1338,24 @@ markers = {main = "extra == \"transcribe\" or extra == \"all\""}
 docs = ["furo (>=2023.9.10)", "sphinx (>=7.2.6)", "sphinx-autodoc-typehints (>=1.24)"]
 testing = ["covdefaults (>=2.3)", "coverage (>=7.3.2)", "diff-cover (>=8)", "pytest (>=7.4.3)", "pytest-cov (>=4.1)", "pytest-mock (>=3.12)", "pytest-timeout (>=2.2)"]
 typing = ["typing-extensions (>=4.8) ; python_version < \"3.11\""]
+
+[[package]]
+name = "fire"
+version = "0.7.1"
+description = "A library for automatically generating command line interfaces."
+optional = false
+python-versions = ">=3.7"
+groups = ["main"]
+files = [
+    {file = "fire-0.7.1-py3-none-any.whl", hash = "sha256:e43fd8a5033a9001e7e2973bab96070694b9f12f2e0ecf96d4683971b5ab1882"},
+    {file = "fire-0.7.1.tar.gz", hash = "sha256:3b208f05c736de98fb343310d090dcc4d8c78b2a89ea4f32b837c586270a9cbf"},
+]
+
+[package.dependencies]
+termcolor = "*"
+
+[package.extras]
+test = ["hypothesis (<6.136.0)", "levenshtein (<=0.27.1)", "pip", "pylint (<3.3.8)", "pytest (<=8.4.1)", "pytest-pylint (<=1.1.2)", "pytest-runner (<7.0.0)", "setuptools (<=80.9.0)", "termcolor (<3.2.0)"]
 
 [[package]]
 name = "flatbuffers"
@@ -7166,25 +7204,6 @@ files = [
 ]
 
 [[package]]
-name = "sox"
-version = "1.4.1"
-description = "Python wrapper around SoX."
-optional = false
-python-versions = "*"
-groups = ["main"]
-files = [
-    {file = "sox-1.4.1-py2.py3-none-any.whl", hash = "sha256:2458c8e71e229e7fb1a088874ad07906e0aedfb2874a6c4f0430efd6e7587129"},
-    {file = "sox-1.4.1.tar.gz", hash = "sha256:b0f2d13692450b889cd3f66127e96f801942ec2aac5bb21653dfd150e0d71055"},
-]
-
-[package.dependencies]
-numpy = ">=1.9.0"
-
-[package.extras]
-docs = ["numpydoc", "sphinx (==1.2.3)", "sphinx-rtd-theme", "sphinxcontrib-napoleon"]
-tests = ["pysoundfile (>=0.9.0)", "pytest", "pytest-cov", "pytest-pep8"]
-
-[[package]]
 name = "sphinx"
 version = "5.3.0"
 description = "Python documentation generator"
@@ -7459,6 +7478,38 @@ files = [
 
 [package.dependencies]
 mpmath = ">=0.19"
+
+[[package]]
+name = "termcolor"
+version = "2.4.0"
+description = "ANSI color formatting for output in terminal"
+optional = false
+python-versions = ">=3.8"
+groups = ["main"]
+markers = "python_version < \"3.11\""
+files = [
+    {file = "termcolor-2.4.0-py3-none-any.whl", hash = "sha256:9297c0df9c99445c2412e832e882a7884038a25617c60cea2ad69488d4040d63"},
+    {file = "termcolor-2.4.0.tar.gz", hash = "sha256:aab9e56047c8ac41ed798fa36d892a37aca6b3e9159f3e0c24bc64a9b3ac7b7a"},
+]
+
+[package.extras]
+tests = ["pytest", "pytest-cov"]
+
+[[package]]
+name = "termcolor"
+version = "3.3.0"
+description = "ANSI color formatting for output in terminal"
+optional = false
+python-versions = ">=3.10"
+groups = ["main"]
+markers = "python_version >= \"3.11\""
+files = [
+    {file = "termcolor-3.3.0-py3-none-any.whl", hash = "sha256:cf642efadaf0a8ebbbf4bc7a31cec2f9b5f21a9f726f4ccbb08192c9c26f43a5"},
+    {file = "termcolor-3.3.0.tar.gz", hash = "sha256:348871ca648ec6a9a983a13ab626c0acce02f515b9e1983332b17af7979521c5"},
+]
+
+[package.extras]
+tests = ["pytest", "pytest-cov"]
 
 [[package]]
 name = "text-unidecode"
@@ -7960,4 +8011,4 @@ translate = ["deepl"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.8,<4"
-content-hash = "e705df9055329b76cd99634cbb1a9589e56a079c41b6f2386ac5061b34205316"
+content-hash = "510f52e956b611ac74b71da7c283cbe3a158d707c6606327dede951db24ad181"
