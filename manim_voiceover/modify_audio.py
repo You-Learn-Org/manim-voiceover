@@ -12,6 +12,9 @@ def adjust_speed(input_path: str, output_path: str, tempo: float) -> None:
         output_path = path_ + str(uuid.uuid1()) + ext
 
     tfm = sox.Transformer()
+    # Always use tempo (WSOLA) over stretch (phase vocoder) — stretch
+    # produces robotic artifacts on speech. The SoX warning about tempo
+    # overhead for small factors is negligible in practice.
     tfm.tempo(tempo, audio_type='s')
     tfm.build(input_filepath=input_path, output_filepath=output_path)
     if same_destination:
